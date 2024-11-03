@@ -87,7 +87,7 @@ register_shutdown_function(function(){
     if ($err && $err['type'] != E_WARNING) {
         $err['type'] = $err['type'] . ':' . array_search($err['type'], get_defined_constants(true)['Core']);
         $err['uri'] = $_SERVER['REQUEST_URI'] ?? $_SERVER['SCRIPT_NAME'];
-        [$err['user'], $err['role']] = Mage::helper('base')->getSessionUser();
+        [$err['user'], $err['role']] = Mage::helper('shooter')->getSessionUser();
         Mage::getModel('core/flag', ['flag_code' => 'error_get_last'])
             ->loadSelf()
             ->setFlagData($err)
