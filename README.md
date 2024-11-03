@@ -109,16 +109,22 @@ Refer to [InfoController.php](app/code/community/Kiatng/Shooter/controllers/Info
 
 ## Installation
 
-### Composer
+### modman
+Use [modman](https://github.com/colinmollenhour/modman) to install the module, open a bash terminal and run:
 
-Easiest way to install the module is using Composer:
+```bash
+modman clone https://github.com/kiatng/openmage-shooter
+```
+
+### Composer
+Open a bash terminal and run:
 ```bash
 composer require kiatng/openmage-shooter
 ```
 
 ### Manual Installation
 
-Download the files to your OpenMage root directory.
+Download the files in the `app` directory to your OpenMage root directory.
 
 ## Contributing
 
