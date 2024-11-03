@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+    @category   Kiatng
+    @package    Kiatng_Shooter
+    @copyright  Copyright (c) 2024 Ng Kiat Siong
+    @license    GNU GPL v3.0
+-->
+<config>
+    <modules>
+        <Kiatng_Shooter>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Kiatng_Shooter>
+    </modules>
+</config>

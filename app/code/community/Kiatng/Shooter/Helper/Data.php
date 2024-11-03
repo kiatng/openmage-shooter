@@ -1,0 +1,233 @@
+<?php
+/**
+ * @category   Kiatng
+ * @package    Kiatng_Shooter
+ * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @license    GNU GPL v3.0
+ */
+
+class Kiatng_Shooter_Helper_Data extends Mage_Core_Helper_Abstract
+{
+    /**
+     * Return current local date and time
+     *
+     * @link http://www.php.net/manual/en/function.date.php
+     */
+    public function getLocalDateTime(string $format = 'd-m-Y H:i:s'): string
+    {
+        return Mage::getSingleton('core/date')->date($format);
+    }
+
+    /**
+     * @return Mage_Api2_Model_Auth_User_Abstract|null
+     */
+    protected function _getRestAuthUser()
+    {
+        $getAuthUser = function() {
+            /** @var Mage_Api2_Model_Server $this */
+            return $this->_authUser;
+        };
+        return $getAuthUser->call(Mage::getSingleton('api2/server'));
+    }
+
+    /**
+     * @see Aoe_Scheduler_Helper_Data of the same function
+     * Return the current system user running this process
+     */
+    public function getRunningUser(): string
+    {
+        if (function_exists('posix_getpwuid')) {
+            return posix_getpwuid(posix_geteuid())['name'];
+        }
+        $username = getenv('USERNAME');
+        if (!$username) {
+            $username = getenv('USER');
+        }
+        if (!$username) {
+           $username = trim(shell_exec('whoami'));
+        }
+        return $username;
+    }
+
+    /**
+     * @return string[] [username, user_role|'frontend'|'api'|'cron'|'rest'|'system']
+     * @throws Mage_Core_Exception
+     * @throws Mage_Core_Model_Store_Exception
+     */
+    public function getSessionUser()
+    {
+        // Check cron first, as it may use admin session.
+        $filename = isset($_SERVER['PHP_SELF']) ? basename($_SERVER['PHP_SELF']) : '';
+        if ($filename === 'cron.php') {
+            return [$this->getRunningUser(), 'cron'];
+        }
+
+        $session = Mage::getSingleton('admin/session');
+        if ($session->isLoggedIn()) {
+            $user = $session->getUser();
+            return [$user->getUsername(), $user->getRole()->getRoleName()];
+        }
+
+        $session = Mage::getSingleton('customer/session');
+        if ($session->isLoggedIn()) {
+            $customer = $session->getCustomer();
+            return [$customer->getEmail(), 'frontend'];
+        }
+
+        $session = Mage::getSingleton('api/session');
+        if ($session->isLoggedIn()) {
+            $user = Mage::getSingleton('api/session')->getUser();
+            return [$user->getUsername(), 'api ' . Mage::getSingleton('api/server')->getApiName()];
+        }
+
+        if ($authUser = $this->_getRestAuthUser()) {
+            return [$authUser->getLabel() . ' #' . $authUser->getUserId(), 'rest'];
+        }
+
+        return [$this->getRunningUser(), php_sapi_name() ?: 'system'];
+    }
+
+    /**
+     * Write msg and optional var to log file with current store timestamp
+     *
+     * @param string $msg
+     * @param mixed $var
+     * @param string $filename
+     * @return void
+     */
+    public function log(string $msg, $var = null, string $filename = 'shooter.log')
+    {
+        if ($fh = @fopen(Mage::getBaseDir('var') . DS . 'log' . DS . $filename, 'a+')) {
+            list($username, $userrole) = $this->getSessionUser();
+            $msg = "[{$this->getLocalDateTime()}][$username $userrole] $msg \r\n";
+            if ($var !== null) {
+                if ($var instanceof Varien_Object) {
+                    $data = $var->getData();
+                    foreach ($data as $k => $v) {
+                        if ($v instanceof Varien_Object) {
+                            $data[$k] = $v->getData();
+                        }
+                    }
+                    $var = print_r($data, true);
+                } elseif ($var instanceof Varien_Data_Collection) {
+                    $var = print_r($var->toArray(), true);
+                } else {
+                    $var = print_r($var, true);
+                }
+                $msg .= $var . "\r\n";
+            }
+            fputs($fh, $msg, strlen($msg));
+            fclose($fh);
+        }
+    }
+
+    /**
+     * Echo $var to browser
+     *
+     * @param mixed $var
+     * @param string $title
+     * @return void
+     */
+    public function echo($var, string $title = '')
+    {
+        if ($title) $title = '<h3>'.$title.'</h3>';
+        if ($var instanceof Varien_Object) {
+            $output = $title.'<pre>'.print_r($var->getData(), true).'</pre>';
+        } elseif ($var instanceof Varien_Data_Collection) {
+            $output = $title.'<pre>'.print_r($var->toArray(), true).'</pre>';
+        } else {
+            $output = Zend_Debug::dump($var, $title, false);
+        }
+
+        Mage::app()->getResponse()->setHeader('Content-Type', 'text/html')->setBody($output);
+    }
+
+    /**
+     * Echo request params and $_FILES
+     *
+     * @param mixed|null $var
+     * @return void
+     * @throws Mage_Core_Exception
+     * @throws Mage_Core_Model_Store_Exception
+     * @throws Zend_Controller_Response_Exception
+     */
+    public function echoParams($var = null)
+    {
+        $output = '<h3>Params</h3>';
+        $params  = Mage::app()->getRequest()->getParams();
+        empty($_FILES) ?: $params['$_FILES'] = $_FILES;
+        $output .=  Zend_Debug::dump($params, null, false);
+        if ($var) {
+            $output .= '<h3>Var</h3>';
+            if ($var instanceof Varien_Object) {
+                $output .= '<pre>'.print_r($var->getData(), true).'</pre>';
+            } elseif ($var instanceof Varien_Data_Collection) {
+                $output .= '<pre>'.print_r($var->toArray(), true).'</pre>';
+            } else {
+                $output .= Zend_Debug::dump($var, null, false);
+            }
+        }
+        Mage::app()->getResponse()->setHeader('Content-Type', 'text/html')->setBody($output);
+    }
+
+    /**
+     * Get trace stack
+     *
+     * @return void
+     */
+    public function trace(string $msg = '')
+    {
+        //$this->log('Trace Stack', Varien_Debug::backtrace(true, false));
+        $this->log("Trace Stack: $msg", mageDebugBacktrace(true, false, true));
+    }
+
+    /**
+     * Read last lines of file
+     *
+     * @param string $filepath Path to the file to read
+     * @param int $lines Number of lines to read (must be positive)
+     * @return string|false Returns the last n lines or false on error
+     */
+    public function tailFile(string $filepath, int $lines = 10)
+    {
+        // Open file
+        $f = fopen($filepath, "rb");
+        if ($f === false) {
+            return false;
+        }
+
+        try {
+            // Sets buffer size based on number of lines
+            $buffer = $lines < 10 ? 512 : 4096;
+
+            // Jump to last character
+            fseek($f, -1, SEEK_END);
+
+            // Adjust line count if file doesn't end with newline
+            if (fread($f, 1) != "\n") {
+                $lines -= 1;
+            }
+
+            // Start reading
+            $output = '';
+            $chunk = '';
+
+            while (ftell($f) > 0 && $lines >= 0) {
+                $seek = min(ftell($f), $buffer);
+                fseek($f, -$seek, SEEK_CUR);
+                $output = ($chunk = fread($f, $seek)) . $output;
+                fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);
+                $lines -= substr_count($chunk, "\n");
+            }
+
+            // Trim excess lines
+            while ($lines++ < 0) {
+                $output = substr($output, strpos($output, "\n") + 1);
+            }
+
+            return trim($output);
+        } finally {
+            fclose($f);
+        }
+    }
+}

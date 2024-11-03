@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category   Kiatng
+ * @package    Kiatng_Shooter
+ * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @license    GNU GPL v3.0
+ */
+-->
+<config>
+    <modules>
+        <Kiatng_Shooter>
+            <version>0.0.1</version>
+        </Kiatng_Shooter>
+    </modules>
+    <global>
+        <helpers>
+            <shooter>
+                <class>Kiatng_Shooter_Helper</class>
+            </shooter>
+        </helpers>
+    </global>
+    <frontend>
+        <routers>
+            <shooter>
+                <use>standard</use>
+                <args>
+                    <module>Kiatng_Shooter</module>
+                    <frontName>shooter</frontName>
+                </args>
+            </shooter>
+        </routers>
+    </frontend>
+</config>
