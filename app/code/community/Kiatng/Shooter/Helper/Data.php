@@ -19,6 +19,38 @@ class Kiatng_Shooter_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Convert seconds to human readable time duration
+     */
+    public function toHumanReadableTimeDuration(float $dt): string
+    {
+        if ($dt >= 86400) {
+            $days = floor($dt / 86400);
+            $hours = floor(($dt % 86400) / 3600);
+            $minutes = floor(($dt % 3600) / 60);
+            $seconds = $dt % 60;
+            return $days . 'd ' . $hours . 'h ' . $minutes . 'm ' . number_format($seconds, 3) . 's';
+        }
+        if ($dt >= 3600) {
+            $hours = floor($dt / 3600);
+            $minutes = floor(($dt % 3600) / 60);
+            $seconds = $dt % 60;
+            return $hours . 'h ' . $minutes . 'm ' . number_format($seconds, 3) . 's';
+        }
+        if ($dt >= 60) {
+            $minutes = floor($dt / 60);
+            $seconds = $dt % 60;
+            return $minutes . 'm ' . number_format($seconds, 3) . 's';
+        }
+        if ($dt >= 1) {
+            return number_format($dt, 3) . 's';
+        }
+        if ($dt >= 0.001) {
+            return number_format($dt * 1000, 3) . 'ms';
+        }
+        return number_format($dt * 1000000, 3) . 'μs';
+    }
+
+    /**
      * @return Mage_Api2_Model_Auth_User_Abstract|null
      */
     protected function _getRestAuthUser()
@@ -126,11 +158,15 @@ class Kiatng_Shooter_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @param mixed $var
      * @param string $title
+     * @param float $dt Execution time in seconds
      * @return void
      */
-    public function echo($var, string $title = '')
+    public function echo($var, string $title = '', float $dt = 0)
     {
-        if ($title) $title = '<h3>'.$title.'</h3>';
+        $humanReadableDt = $dt ? '(' . $this->toHumanReadableTimeDuration($dt) . ')' : '';
+        if ($title || $humanReadableDt) {
+            $title = "<h3>$title $humanReadableDt</h3>";
+        }
         if ($var instanceof Varien_Object) {
             $output = $title.'<pre>'.print_r($var->getData(), true).'</pre>';
         } elseif ($var instanceof Varien_Data_Collection) {

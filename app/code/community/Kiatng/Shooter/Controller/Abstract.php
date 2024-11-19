@@ -36,7 +36,7 @@ abstract class Kiatng_Shooter_Controller_Abstract extends Mage_Core_Controller_F
      */
     protected function _echo(mixed $var, string $title = '')
     {
-        $dt = $this->_t2 ? $dt = (microtime(true) - $this->_t2) * 1000 : '';
-        Mage::helper('shooter')->echo($var, $title . '(' . $dt . 'ms)');
+        $dt = microtime(true) - $this->_t2;
+        Mage::helper('shooter')->echo($var, $title, $dt);
     }
 }
