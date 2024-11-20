@@ -1,0 +1,116 @@
+<?php
+/**
+ * shooter Module
+ *
+ * @category   design
+ * @package    base_default
+ * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @license    GNU GPL v3.0
+ */
+?>
+<?php
+/**
+ * @var Mage_Core_Block_Template $this
+ */
+?>
+<?php
+    $helper = Mage::helper('shooter');
+    $session = Mage::getSingleton('customer/session');
+?>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<div class="page-title">
+    <h1><?php echo $helper->__('OpenMage OAuth REST Tester') ?></h1>
+</div>
+See <a target="_blank" href="https://jouriy.github.io/guides-m1x/api/rest/Resources/resources.html">here</a> for a list of resources.
+Click <a target="_blank" href="<?php echo $this->getUrl('*/*/info') ?>">here</a> for all the OAuth params.
+<div class="col2-set">
+    <div class="col-1">
+        <form action="<?php echo $this->getUrl('shooter/rest/ajaxResource') ?>" id="oauthResource" method="post">
+            <div class="fieldset">
+                <h2 class="legend"><?php echo $helper->__('Request') ?></h2>
+                <ul class="form-list">
+                    <li>
+                        <?php echo $session->getOauthUrl() ?>/{Path}/{Resource Name}
+                    </li>
+                    <li>
+                        <label for="path" class="required"><em>*</em>Path</label>
+                        <div class="input-box">
+                            <input name="path" id="path" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Path')) ?>" value="api/rest" class="input-text required-entry" type="text" />
+                        </div>
+                    </li>
+                    <li>
+                        <label for="url" class="required"><em>*</em>Resource Name</label>
+                        <div class="input-box">
+                            <input name="name" id="name" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Name')) ?>" value="products" class="input-text required-entry" type="text" />
+                        </div>
+                    </li>
+                    <li>
+                        <label for="method" class="required"><em>*</em>Method</label>
+                        <div class="input-box">
+                            <select name="method" id="method" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Method')) ?>" class="required-entry">
+                                <option value="GET" selected>GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li id="li-params">
+                        <label for="params">Params</label>
+                        <div class="input-box">
+                            <textarea name="params" id="params" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Params')) ?>" class="input-text" rows="5" cols="50"></textarea>
+                            <p class="note"><span><?php echo $helper->__('JSON format: {"param_1": "value_1", "param_2": "value_2"}') ?></span></p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="buttons-set">
+                <p class="required"><?php echo $helper->__('* Required Fields') ?></p>
+                <p class="back-link"><a href="<?php echo $this->getUrl('*/*/new') ?>"><small>&laquo; </small><?php echo $helper->__('New OAuth Session') ?></a></p>
+                <button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Submit')) ?>" class="button"><span><span><?php echo $helper->__('Submit') ?></span></span></button>
+            </div>
+        </form>
+    </div>
+    <div class="col-2">
+        <div class="fieldset">
+            <h2 class="legend"><?php echo $helper->__('Response') ?></h2>
+            <p class="note" id="tat"><p>
+            <pre class="json">
+                <code id="result"></code>
+            </pre>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+var oauthResource = new VarienForm('oauthResource', true);
+oauthResource.form.onsubmit = function(event) {
+    event.preventDefault();
+    $('tat').update('Loading...');
+    $('result').update('');
+    let tat = new Date().getTime();
+    if (oauthResource.validator.validate()) {
+        new Ajax.Request(oauthResource.form.action, {
+            method: 'post',
+            parameters: oauthResource.form.serialize(true),
+            onSuccess: function(transport) {
+                $('tat').update('Time taken: ' + (new Date().getTime() - tat) + 'ms');
+                if (transport.responseText.isJSON()) {
+                    const response = transport.responseText.evalJSON();
+                    $('result').update(JSON.stringify(response, null, 2));
+                    return;
+                }
+                $('result').update(transport.responseText || 'No response' + ' (status: ' + transport.status + ')');
+                return;
+            }
+        });
+    }
+}
+$('li-params').hide();
+$('method').observe('change', function(event) {
+    if (event.target.value === 'GET' || event.target.value === 'DELETE') {
+        $('li-params').hide();
+    } else {
+        $('li-params').show();
+    }
+});
+</script>

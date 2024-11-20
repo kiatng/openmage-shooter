@@ -1,0 +1,66 @@
+<?php
+/**
+ * shooter Module
+ *
+ * @category   design
+ * @package    base_default
+ * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @license    GNU GPL v3.0
+ */
+?>
+<?php
+/**
+ * @var Mage_Core_Block_Template $this
+ */
+?>
+<?php
+    $helper = Mage::helper('shooter');
+    $session = Mage::getSingleton('customer/session');
+?>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<div class="page-title">
+    <h1><?php echo $helper->__('Test OAuth 1.0a') ?></h1>
+</div>
+<form action="<?php echo $this->getUrl('shooter/rest/oauthPost') ?>" id="oauthForm" method="post">
+    <div class="fieldset">
+        <h2 class="legend"><?php echo $helper->__('OAuth Server Connection Params') ?></h2>
+        <ul class="form-list">
+            <li>
+                <label for="url" class="required"><em>*</em><?php echo $helper->__('URL') ?></label>
+                <div class="input-box">
+                    <input name="url" id="url" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('URL')) ?>" value="<?php echo $this->escapeHtml($session->getOauthUrl()) ?>" class="input-text required-entry validate-url" type="text" />
+                </div>
+            </li>
+            <li>
+                <label for="key" class="required"><em>*</em><?php echo $helper->__('Key') ?></label>
+                <div class="input-box">
+                    <input name="key" id="key" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Key')) ?>" value="<?php echo $this->escapeHtml($session->getOauthKey()) ?>" class="input-text required-entry validate-alphanum" type="text" />
+                </div>
+            </li>
+            <li>
+                <label for="secret" class="required"><em>*</em><?php echo $helper->__('Secret') ?></label>
+                <div class="input-box">
+                    <input name="secret" id="secret" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Secret')) ?>" value="<?php echo $this->escapeHtml($session->getOauthSecret()) ?>" class="input-text required-entry validate-alphanum" type="text" />
+                </div>
+            </li>
+            <li>
+                <label for="user_type"><?php echo $helper->__('User Type') ?></label>
+                <div class="input-box">
+                    <select name="user_type" id="user_type" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('User Type')) ?>" value="<?php echo $this->escapeHtml($session->getOauthSecret()) ?>" class="input-text validate-select">
+                        <option value="customer"<?php if ($session->getOauthUserType() !== 'admin') echo ' selected="selected"' ?>><?php echo $helper->__('Customer') ?></option>
+                        <option value="admin"<?php if ($session->getOauthUserType() === 'admin') echo ' selected="selected"' ?>><?php echo $helper->__('Admin') ?></option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="buttons-set">
+        <p class="required"><?php echo $helper->__('* Required Fields') ?></p>
+        <button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Save')) ?>" class="button"><span><span><?php echo $helper->__('Save') ?></span></span></button>
+    </div>
+</form>
+<script type="text/javascript">
+//<![CDATA[
+    var oauthForm = new VarienForm('oauthForm', true);
+//]]>
+</script>

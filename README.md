@@ -14,6 +14,7 @@ A browser-centric troubleshooting tool for OpenMage developers. Features:
   - Server host name, IP address, OS, PHP version
   - OpenMage version
   - PHP information
+- OAuth 1.0a Tester
 
 **CAUTION**: This module is designed for development environments. It may not be suitable for production environments due to the potential for exposing sensitive information.
 
@@ -24,6 +25,7 @@ A browser-centric troubleshooting tool for OpenMage developers. Features:
     - [Output the Log Files in the Browser](#output-the-log-files-in-the-browser)
     - [Capture the Last Error](#capture-the-last-error)
     - [Show Information in the Browser](#show-information-in-the-browser)
+    - [REST OAuth 1.0a Tester](#oauth-10a-tester)
 2. [Installation](#installation)
     - [Composer](#composer)
     - [Manual Installation](#manual-installation)
@@ -106,6 +108,16 @@ The error captured is displayed with URI `/shooter/log`.
 ```
 
 Refer to [InfoController.php](app/code/community/Kiatng/Shooter/controllers/InfoController.php) for more details.
+
+### REST OAuth 1.0a Tester
+
+```
+{http://your_domain}/shooter/rest
+```
+
+The OAuth credentials are only stored in the session and never saved anywhere else.
+
+Refer to [RestController.php](app/code/community/Kiatng/Shooter/controllers/RestController.php) for more details.
 
 ## Installation
 

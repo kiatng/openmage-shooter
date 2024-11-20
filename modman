@@ -1,2 +1,4 @@
 app/code/community/Kiatng/Shooter/          app/code/community/Kiatng/Shooter/
 app/etc/modules/Kiatng_Shooter.xml          app/etc/modules/Kiatng_Shooter.xml
+app/locale/en_US/Kiatng_Shooter.csv         app/locale/en_US/Kiatng_Shooter.csv
+app/design/frontend/base/default/template/shooter/    app/design/frontend/base/default/template/shooter/

@@ -10,7 +10,7 @@
 <config>
     <modules>
         <Kiatng_Shooter>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
         </Kiatng_Shooter>
     </modules>
     <global>
@@ -19,6 +19,15 @@
                 <class>Kiatng_Shooter_Helper</class>
             </shooter>
         </helpers>
+        <translate>
+            <modules>
+                <Kiatng_Shooter>
+                    <files>
+                        <default>Kiatng_Shooter.csv</default>
+                    </files>
+                </Kiatng_Shooter>
+            </modules>
+        </translate>
     </global>
     <frontend>
         <routers>
