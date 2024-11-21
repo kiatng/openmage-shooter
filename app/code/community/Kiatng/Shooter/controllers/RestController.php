@@ -1,15 +1,12 @@
 <?php
 /**
- * log Module
- *
- * @category   Celera
- * @package    Celera_Log
- * @copyright  Copyright (c) 2024 Celera eShop
- * @author     Ng Kiat Siong, Celera eShop, kiatsiong.ng@gmail.com
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category   Kiatng
+ * @package    Kiatng_Shooter
+ * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @license    GNU GPL v3.0
  */
 
-class Celera_Log_RestController extends Celera_Log_Controller_Abstract
+class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
 {
     const STATE_INIT = 0;
     const STATE_REQUEST_TOKEN = 1;
@@ -20,7 +17,7 @@ class Celera_Log_RestController extends Celera_Log_Controller_Abstract
     {
         /**
          * Check if we lost the session at callback.
-         * URL: domain/clog/rest/callback/ssid/37teecslrt5k6q40if0nrqel7e/?oauth_token=random&oauth_verifier=random
+         * URL: domain/shooter/rest/callback/ssid/37teecslrt5k6q40if0nrqel7e/?oauth_token=random&oauth_verifier=random
          * @link https://stackoverflow.com/questions/22079477/session-is-lost-after-an-oauth-redirect
          */
         if (
@@ -68,14 +65,14 @@ class Celera_Log_RestController extends Celera_Log_Controller_Abstract
                 break;
             case self::STATE_RESOURCE:
                 // Render resource page.
-                $this->_renderLayout($this->__('OpenMage REST Resources'), 'resource');
+                $this->_renderLayout($this->__('shooter REST Resources'), 'resource');
                 break;
         }
     }
 
     /**
      * Callback from OAuth host. Get access token from OAuth host and render resource page.
-     * http://stars.dev5.emgs.sc/clog/rest/callback/?oauth_token=randonstring&oauth_verifier=randonstring
+     * http://openmage.site/shooter/rest/callback/?oauth_token=randonstring&oauth_verifier=randonstring
      */
     public function callbackAction()
     {
@@ -95,13 +92,13 @@ class Celera_Log_RestController extends Celera_Log_Controller_Abstract
             $session->setOauthState(self::STATE_RESOURCE);
         }
 
-        $this->_renderLayout($this->__('OpenMage REST Resources'), 'resource');
+        $this->_renderLayout($this->__('shooter REST Resources'), 'resource');
     }
 
     /**
      * Callback from OAuth host. User rejected the OAuth request.
      * Configure the "Rejected Callback URL" in OM Backend > System > Configuration > Web Services > REST - OAuth Consumers > select a consumer.
-     * An example of the URL: https://apisandbox.mediconnect.com.my/clog/rest/reject
+     * An example of the URL: https://openmage.site/shooter/rest/reject
      */
     public function rejectAction()
     {
@@ -157,7 +154,7 @@ class Celera_Log_RestController extends Celera_Log_Controller_Abstract
 
     /**
      * Get request token from OAuth host.
-     * https://visa.educationmalaysia.gov.my/oauth/authorize?oauth_token=9ac3d537fc0273b1f1a708b9cf0402bb
+     * https://openmage.site/oauth/authorize?oauth_token=9ac3d537fc0273b1f1a708b9cf0402bb
      */
     protected function _requestToken()
     {
@@ -274,8 +271,8 @@ class Celera_Log_RestController extends Celera_Log_Controller_Abstract
         $layout->getBlock('content')->append(
             $layout->createBlock(
                 'core/template',
-                "clog_rest_$blockName",
-                ['template' => "clog/rest/{$blockName}.phtml"]
+                "shooter_rest_$blockName",
+                ['template' => "shooter/rest/{$blockName}.phtml"]
             )
         );
         /** @var Mage_Page_Block_Html $root */
