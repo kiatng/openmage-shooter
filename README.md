@@ -14,7 +14,9 @@ A browser-centric troubleshooting tool for OpenMage developers. Features:
   - Server host name, IP address, OS, PHP version
   - OpenMage version
   - PHP information
-- OAuth 1.0a Tester
+- OAuth 1.0a Tester:
+  - Test OpenMage REST API as a consumer
+  - Test SSL connection
 
 **CAUTION**: This module is designed for development environments. It may not be suitable for production environments due to the potential for exposing sensitive information.
 
@@ -110,6 +112,7 @@ The error captured is displayed with URI `/shooter/log`.
 Refer to [InfoController.php](app/code/community/Kiatng/Shooter/controllers/InfoController.php) for more details.
 
 ### REST OAuth 1.0a Tester
+The tester allows you to test the OpenMage REST API as a consumer interactively with a browser. Use the following URI to access it:
 
 ```
 {http://your_domain}/shooter/rest
@@ -118,6 +121,15 @@ Refer to [InfoController.php](app/code/community/Kiatng/Shooter/controllers/Info
 The OAuth credentials are only stored in the session and never saved anywhere else.
 
 Refer to [RestController.php](app/code/community/Kiatng/Shooter/controllers/RestController.php) for more details.
+
+#### Test SSL Connection
+For public accessible URLs, tools like [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html) may be preferred. But if the site is private or under development, this tester is useful:
+
+```
+{http://your_domain}/shooter/ssl?url={url}
+```
+
+Refer to [SslController.php](app/code/community/Kiatng/Shooter/controllers/SslController.php) for more details.
 
 ## Installation
 
