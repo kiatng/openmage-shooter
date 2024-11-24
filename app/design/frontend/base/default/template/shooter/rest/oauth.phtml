@@ -21,32 +21,33 @@
 <div class="page-title">
     <h1><?php echo $helper->__('Test OAuth 1.0a') ?></h1>
 </div>
-<form action="<?php echo $this->getUrl('shooter/rest/oauthPost') ?>" id="oauthForm" method="post">
+<form action="<?php echo $this->getUrl('*/*/oauthPost') ?>" id="oauthForm" method="post">
     <div class="fieldset">
         <h2 class="legend"><?php echo $helper->__('OAuth Server Connection Params') ?></h2>
         <ul class="form-list">
             <li>
                 <label for="url" class="required"><em>*</em><?php echo $helper->__('URL') ?></label>
                 <div class="input-box">
-                    <input name="url" id="url" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('URL')) ?>" value="<?php echo $this->escapeHtml($session->getOauthUrl()) ?>" class="input-text required-entry validate-url" type="text" />
+                    <input name="url" id="url" title="<?php echo $helper->quoteEscape($helper->__('URL')) ?>" value="<?php echo $this->escapeHtml($session->getOauthUrl()) ?>" class="input-text required-entry validate-url" type="text" />
                 </div>
+                <a href="#" onclick="testSsl(); return false;" class="btn btn-primary"><?php echo $helper->__('Test SSL Connection') ?></a>
             </li>
             <li>
                 <label for="key" class="required"><em>*</em><?php echo $helper->__('Key') ?></label>
                 <div class="input-box">
-                    <input name="key" id="key" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Key')) ?>" value="<?php echo $this->escapeHtml($session->getOauthKey()) ?>" class="input-text required-entry validate-alphanum" type="text" />
+                    <input name="key" id="key" title="<?php echo $helper->quoteEscape($helper->__('Key')) ?>" value="<?php echo $this->escapeHtml($session->getOauthKey()) ?>" class="input-text required-entry validate-alphanum" type="text" />
                 </div>
             </li>
             <li>
                 <label for="secret" class="required"><em>*</em><?php echo $helper->__('Secret') ?></label>
                 <div class="input-box">
-                    <input name="secret" id="secret" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Secret')) ?>" value="<?php echo $this->escapeHtml($session->getOauthSecret()) ?>" class="input-text required-entry validate-alphanum" type="text" />
+                    <input name="secret" id="secret" title="<?php echo $helper->quoteEscape($helper->__('Secret')) ?>" value="<?php echo $this->escapeHtml($session->getOauthSecret()) ?>" class="input-text required-entry validate-alphanum" type="text" />
                 </div>
             </li>
             <li>
                 <label for="user_type"><?php echo $helper->__('User Type') ?></label>
                 <div class="input-box">
-                    <select name="user_type" id="user_type" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('User Type')) ?>" value="<?php echo $this->escapeHtml($session->getOauthSecret()) ?>" class="input-text validate-select">
+                    <select name="user_type" id="user_type" title="<?php echo $helper->quoteEscape($helper->__('User Type')) ?>" value="<?php echo $this->escapeHtml($session->getOauthSecret()) ?>" class="input-text validate-select">
                         <option value="customer"<?php if ($session->getOauthUserType() !== 'admin') echo ' selected="selected"' ?>><?php echo $helper->__('Customer') ?></option>
                         <option value="admin"<?php if ($session->getOauthUserType() === 'admin') echo ' selected="selected"' ?>><?php echo $helper->__('Admin') ?></option>
                     </select>
@@ -56,11 +57,21 @@
     </div>
     <div class="buttons-set">
         <p class="required"><?php echo $helper->__('* Required Fields') ?></p>
-        <button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Save')) ?>" class="button"><span><span><?php echo $helper->__('Save') ?></span></span></button>
+        <button type="submit" title="<?php echo $helper->quoteEscape($helper->__('Save')) ?>" class="button"><span><span><?php echo $helper->__('Save') ?></span></span></button>
     </div>
 </form>
-<script type="text/javascript">
-//<![CDATA[
+<script>
     var oauthForm = new VarienForm('oauthForm', true);
-//]]>
+
+    function testSsl() {
+        const urlInput = $('url');
+        if (urlInput && urlInput.value) {
+            window.open(
+                '<?php echo $this->getUrl('*/ssl') ?>?url=' + encodeURIComponent(urlInput.value),
+                '_blank'
+            );
+        } else {
+            alert('<?php echo $helper->__('Please enter a valid URL') ?>');
+        }
+    }
 </script>

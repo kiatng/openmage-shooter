@@ -111,8 +111,11 @@ class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
      */
     public function oauthPostAction()
     {
-        $host = $this->getRequest()->getPost('url');
-        $host = rtrim($host, '/');
+        $host = rtrim($this->getRequest()->getPost('url', ''), '/');
+        if (!$host) {
+            return $this->_redirect('*/*/new');
+        }
+
         $session = Mage::getSingleton('customer/session');
         $session->setOauthUrl($host);
         $session->setOauthKey($this->getRequest()->getPost('key'));
@@ -168,7 +171,7 @@ class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
             $errMsg = $this->__('Problem getting request token from %s.<br>', $url);
             $errMsg .= $e->getMessage();
             if ($e->getPrevious()) {
-                $errMsg .= ': ' . $e->getPrevious()->getMessage();
+                $errMsg .= '<br><b>Previous error:</b> ' . $e->getPrevious()->getMessage();
             }
             $session->addError($errMsg);
             return $this->_redirect('*/*/new');
@@ -394,6 +397,8 @@ class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
             CURLOPT_HEADER => true,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,  // Verify the certificate's name against host
+            CURLOPT_CERTINFO => true,     // Get certificate info
             CURLOPT_VERBOSE => true
         ];
 
@@ -406,6 +411,9 @@ class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
         $response = curl_exec($ch);
         $error = curl_error($ch);
         $info = curl_getinfo($ch);
+
+        // Get certificate information
+        $certInfo = curl_getinfo($ch, CURLINFO_CERTINFO);
 
         rewind($verbose);
         $verboseLog = stream_get_contents($verbose);
@@ -421,10 +429,28 @@ class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
             ];
         }
 
+        // Format certificate chain information
+        $certChainInfo = '';
+        if (!empty($certInfo)) {
+            foreach ($certInfo as $key => $cert) {
+                $certChainInfo .= sprintf(
+                    "\nCertificate #%d:\n" .
+                    "Subject: %s\n" .
+                    "Issuer: %s\n" .
+                    "Valid Until: %s\n",
+                    $key + 1,
+                    $cert['Subject'] ?? 'N/A',
+                    $cert['Issuer'] ?? 'N/A',
+                    $cert['Expire date'] ?? 'N/A'
+                );
+            }
+        }
+
         return [
             'test' => $testName,
             'status' => 'Success',
             'info' => "HTTP {$info['http_code']}, SSL: {$info['ssl_verify_result']}\n" .
+                     "Certificate Chain:" . $certChainInfo . "\n" .
                      "Verbose log:\n" . $verboseLog
         ];
     }

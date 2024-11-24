@@ -25,7 +25,7 @@ See <a target="_blank" href="https://devdocs-openmage.org/guides/m1x/api/rest/Re
 Click <a target="_blank" href="<?php echo $this->getUrl('*/*/info') ?>">here</a> for all the OAuth params.
 <div class="col2-set">
     <div class="col-1">
-        <form action="<?php echo $this->getUrl('shooter/rest/ajaxResource') ?>" id="oauthResource" method="post">
+        <form action="<?php echo $this->getUrl('*/*/ajaxResource') ?>" id="oauthResource" method="post">
             <div class="fieldset">
                 <h2 class="legend"><?php echo $helper->__('Request') ?></h2>
                 <ul class="form-list">
@@ -35,19 +35,19 @@ Click <a target="_blank" href="<?php echo $this->getUrl('*/*/info') ?>">here</a>
                     <li>
                         <label for="path" class="required"><em>*</em>Path</label>
                         <div class="input-box">
-                            <input name="path" id="path" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Path')) ?>" value="api/rest" class="input-text required-entry" type="text" />
+                            <input name="path" id="path" title="<?php echo $helper->quoteEscape($helper->__('Path')) ?>" value="api/rest" class="input-text required-entry" type="text" />
                         </div>
                     </li>
                     <li>
                         <label for="url" class="required"><em>*</em>Resource Name</label>
                         <div class="input-box">
-                            <input name="name" id="name" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Name')) ?>" value="products" class="input-text required-entry" type="text" />
+                            <input name="name" id="name" title="<?php echo $helper->quoteEscape($helper->__('Name')) ?>" value="products" class="input-text required-entry" type="text" />
                         </div>
                     </li>
                     <li>
                         <label for="method" class="required"><em>*</em>Method</label>
                         <div class="input-box">
-                            <select name="method" id="method" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Method')) ?>" class="required-entry">
+                            <select name="method" id="method" title="<?php echo $helper->quoteEscape($helper->__('Method')) ?>" class="required-entry">
                                 <option value="GET" selected>GET</option>
                                 <option value="POST">POST</option>
                                 <option value="PUT">PUT</option>
@@ -58,7 +58,7 @@ Click <a target="_blank" href="<?php echo $this->getUrl('*/*/info') ?>">here</a>
                     <li id="li-params">
                         <label for="params">Params</label>
                         <div class="input-box">
-                            <textarea name="params" id="params" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Params')) ?>" class="input-text" rows="5" cols="50"></textarea>
+                            <textarea name="params" id="params" title="<?php echo $helper->quoteEscape($helper->__('Params')) ?>" class="input-text" rows="5" cols="50"></textarea>
                             <p class="note"><span><?php echo $helper->__('JSON format: {"param_1": "value_1", "param_2": "value_2"}') ?></span></p>
                         </div>
                     </li>
@@ -67,7 +67,7 @@ Click <a target="_blank" href="<?php echo $this->getUrl('*/*/info') ?>">here</a>
             <div class="buttons-set">
                 <p class="required"><?php echo $helper->__('* Required Fields') ?></p>
                 <p class="back-link"><a href="<?php echo $this->getUrl('*/*/new') ?>"><small>&laquo; </small><?php echo $helper->__('New OAuth Session') ?></a></p>
-                <button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($helper->__('Submit')) ?>" class="button"><span><span><?php echo $helper->__('Submit') ?></span></span></button>
+                <button type="submit" title="<?php echo $helper->quoteEscape($helper->__('Submit')) ?>" class="button"><span><span><?php echo $helper->__('Submit') ?></span></span></button>
             </div>
         </form>
     </div>
