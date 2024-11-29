@@ -152,7 +152,7 @@ Download the files in the `app` directory to your OpenMage root directory.
 
 ## Contributing
 
-We welcome contributions:
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
 2. Create a feature branch
@@ -160,6 +160,18 @@ We welcome contributions:
 4. Update documentation as needed
 
 Please follow our coding standards and include appropriate documentation with your contributions.
+
+### Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## License
 
