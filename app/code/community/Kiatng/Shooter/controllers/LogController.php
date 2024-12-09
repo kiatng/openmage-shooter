@@ -41,15 +41,15 @@ class Kiatng_Shooter_LogController extends Kiatng_Shooter_Controller_Abstract
         }
 
         // Get the latest error in var/report.
+        $helper = Mage::helper('shooter/file');
         $dir = Mage::getBaseDir('var') . DS . 'report';
-        if ($latest = exec("ls -t $dir | head -1")) {
-            $paths[] = $dir . DS . $latest;
+        if ($latest = $helper->latest($dir)) {
+            $paths[] = $latest;
         }
 
-        $helper = Mage::helper('shooter');
         foreach ($paths as $path) {
             if ($secs == -1 || time() - filemtime($path) <= $secs || strpos($path, 'report')) {
-                if ($tail = $helper->tailFile($path, $lines)) {
+                if ($tail = $helper->tail($path, $lines)) {
                     $tail = print_r($tail, true);
                     $dt = Mage::getSingleton('core/date')->date('Y-m-d H:i:s', filemtime($path));
                     $output .= "<h3>$path <em>$dt</em></h3><pre>$tail</pre>";
@@ -91,12 +91,12 @@ class Kiatng_Shooter_LogController extends Kiatng_Shooter_Controller_Abstract
         $paths = glob($dir . DS . $fnm);
         $output = '<h2>GMT '.Mage::getSingleton('core/date')->gmtDate().'</h2>';
 
-        $helper = Mage::helper('shooter');
+        $helper = Mage::helper('shooter/file');
         foreach ($paths as $path) {
             $fnm = basename($path);
             $dt = Mage::getSingleton('core/date')->date('Y-m-d H:i:s', filemtime($path));
             $output .= "<h3>$fnm <em>$dt</em></h3>";
-            if ($tail = $helper->tailFile($path, $lines)) {
+            if ($tail = $helper->tail($path, $lines)) {
                 $tail = print_r($tail, true);
                 $output .= "<pre>$tail</pre>";
             } else {
