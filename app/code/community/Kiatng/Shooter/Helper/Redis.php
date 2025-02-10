@@ -10,7 +10,7 @@ class Kiatng_Shooter_Helper_Redis
     /**
      * Get the Redis session handler
      *
-     * @return Cm\RedisSession\Handler
+     * @return Cm\RedisSession\Handler|string
      */
     protected function _getRedisSessionHandler()
     {
@@ -18,8 +18,12 @@ class Kiatng_Shooter_Helper_Redis
             /** @var Cm_RedisSession_Model_Session $this */
             return $this->sessionHandler;
         };
-        $object = Mage::getSingleton('cm_redissession/session');
-        return $getHandler->call($object);
+        try {
+            $object = Mage::getSingleton('cm_redissession/session');
+            return $getHandler->call($object);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -98,8 +102,7 @@ class Kiatng_Shooter_Helper_Redis
                 $result['session_redis']['session_count'] = $redis->dbSize();
             } else {
                 $result['session_redis'] = [
-                    'status' => 'Not Using Redis Session Handler',
-                    'current_handler' => get_class($sessionHandler)
+                    'status' => $sessionHandler,
                 ];
             }
         } catch (Exception $e) {
