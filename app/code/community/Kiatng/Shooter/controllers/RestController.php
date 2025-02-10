@@ -2,7 +2,7 @@
 /**
  * @category   Kiatng
  * @package    Kiatng_Shooter
- * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @copyright  Copyright (c) 2025 Ng Kiat Siong
  * @license    GNU GPL v3.0
  */
 
@@ -245,7 +245,7 @@ class Kiatng_Shooter_RestController extends Kiatng_Shooter_Controller_Abstract
             'headers' => $response->getHeaders(),
             'status' => $response->getStatus(),
             'message' => $response->getMessage(),
-            'raw_body' => $response->getRawBody(),
+            //'raw_body' => $response->getRawBody(), // May contains non-UTF8 characters.
         ]);
 
         $this->getResponse()

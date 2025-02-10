@@ -2,7 +2,7 @@
 /**
  * @category   Kiatng
  * @package    Kiatng_Shooter
- * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @copyright  Copyright (c) 2025 Ng Kiat Siong
  * @license    GNU GPL v3.0
  */
 
@@ -140,5 +140,13 @@ class Kiatng_Shooter_InfoController extends Kiatng_Shooter_Controller_Abstract
             ],
             'Database Info'
         );
+    }
+
+    /**
+     * Display Redis info.
+     */
+    public function redisAction()
+    {
+        $this->_echo(Mage::helper('shooter/redis')->info(), 'Redis Info');
     }
 }

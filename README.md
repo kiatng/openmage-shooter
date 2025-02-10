@@ -107,6 +107,7 @@ The error captured is displayed with URI `/shooter/log`.
 {http://your_domain}/shooter/info # Display PHP information
 {http://your_domain}/shooter/info/ver # Display OpenMage version
 {http://your_domain}/shooter/info/server # Display server information
+{http://your_domain}/shooter/info/redis # Display Redis info
 ```
 
 Refer to [InfoController.php](app/code/community/Kiatng/Shooter/controllers/InfoController.php) for more details.

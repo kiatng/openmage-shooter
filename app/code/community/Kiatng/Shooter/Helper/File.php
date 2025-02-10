@@ -2,7 +2,7 @@
 /**
  * @category   Kiatng
  * @package    Kiatng_Shooter
- * @copyright  Copyright (c) 2024 Ng Kiat Siong
+ * @copyright  Copyright (c) 2025 Ng Kiat Siong
  * @license    GNU GPL v3.0
  */
 
