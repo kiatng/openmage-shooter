@@ -32,9 +32,11 @@ abstract class Kiatng_Shooter_Controller_Abstract extends Mage_Core_Controller_F
     /**
      * Display the output of a variable.
      *
+     * @param mixed $var
+     * @param string $title
      * @return void
      */
-    protected function _echo(mixed $var, string $title = '')
+    protected function _echo($var, string $title = '')
     {
         $dt = microtime(true) - $this->_t2;
         Mage::helper('shooter')->echo($var, $title, $dt);
