@@ -118,6 +118,19 @@ class Kiatng_Shooter_LogController extends Kiatng_Shooter_Controller_Abstract
             $output .= "<h3>$fnm <em>$dt</em></h3>";
             if ($tail = $helper->tail($path, $lines)) {
                 $tail = print_r($tail, true);
+                $cntLines = count(explode("\n", $tail));
+                if ($cntLines == $lines) {
+                    $path = base64_encode($path);
+                    $output .= "<p>View last number of lines: ";
+                    foreach ([50, 100, 200, 600, 1200, 2400, 5000, 12000] as $l) {
+                        if ($l != $lines) {
+                            $url = Mage::getUrl('*/*/tail', ['path' => $path, 'lines' => $l]);
+                            $output .= "<a href='$url'>$l</a> ";
+                        }
+                    }
+                    $output .= "</p>";
+                }
+
                 $output .= "<pre>$tail</pre>";
             } else {
                 $output .= "<p><em>empty</em></p>";
