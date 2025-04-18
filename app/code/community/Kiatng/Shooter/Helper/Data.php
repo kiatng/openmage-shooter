@@ -71,14 +71,10 @@ class Kiatng_Shooter_Helper_Data extends Mage_Core_Helper_Abstract
         if (function_exists('posix_getpwuid')) {
             return posix_getpwuid(posix_geteuid())['name'];
         }
-        $username = getenv('USERNAME');
-        if (!$username) {
-            $username = getenv('USER');
-        }
-        if (!$username) {
-           $username = trim(shell_exec('whoami'));
-        }
-        return $username;
+
+        return getenv('USERNAME')
+            ?? getenv('USER')
+            ?? function_exists('shell_exec') ? trim(shell_exec('whoami')) : get_current_user();
     }
 
     /**
