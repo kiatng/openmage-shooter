@@ -34,31 +34,47 @@ class Kiatng_Shooter_LogController extends Kiatng_Shooter_Controller_Abstract
             }
         }
 
-        // Get all log files in var/log.
-        $paths = glob(Mage::getBaseDir('log') . DS . "*.log");
+        $paths = [];
+        // Get the error log file.
         if (($path = ini_get('error_log')) && file_exists($path)) {
-            array_unshift($paths, $path);
+            $paths[] = $path;
+        }
+        // Get all log files in var/log.
+        $paths += glob(Mage::getBaseDir('log') . DS . "*.log");
+
+        $helper = Mage::helper('shooter/file');
+        foreach ($paths as $path) {
+            $url = Mage::getUrl('*/*/tail', ['path' => base64_encode($path), 'lines' => 50]);
+            if ($secs == -1 || time() - filemtime($path) <= $secs) {
+                $output .= $helper->getTailHtml($path, $lines);
+                $output .= "<p><a href='$url'>View More</a></p>";
+            } else {
+                $output .= "<h3><a href='$url'>$path</a></h3><p><em>No log in the last $secs seconds (param 'secs')</em></p>";
+            }
         }
 
         // Get the latest error in var/report.
-        $helper = Mage::helper('shooter/file');
         $dir = Mage::getBaseDir('var') . DS . 'report';
         if ($latest = $helper->latest($dir)) {
-            $paths[] = $latest;
+            $output .= $helper->getTailHtml($latest, 100);
+            $url = Mage::getUrl('*/*/deleteReport', ['fnm' => basename($latest)]);
+            $output .= "<p><a href='$url'>Delete Report Permanently</a></p>";
         }
 
-        foreach ($paths as $path) {
-            if ($secs == -1 || time() - filemtime($path) <= $secs || strpos($path, 'report')) {
-                if ($tail = $helper->tail($path, $lines)) {
-                    $tail = print_r($tail, true);
-                    $dt = Mage::getSingleton('core/date')->date('Y-m-d H:i:s', filemtime($path));
-                    $output .= "<h3>$path <em>$dt</em></h3><pre>$tail</pre>";
-                }
-            } elseif (preg_match('/(exception|system|shooter)\.log$/', $path)) {
-                $output .= "<h3>$path</h3><p><em>No log in the last $secs seconds (param 'secs')</em></p>";
-            }
-        }
         $this->getResponse()->setHeader('Content-Type', 'text/html')->setBody($output);
+    }
+
+    /**
+     * Delete the report file.
+     */
+    public function deleteReportAction()
+    {
+        $filename = $this->getRequest()->getParam('fnm');
+        $path = Mage::getBaseDir('var') . DS . 'report' . DS . $filename;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        $this->_redirectReferer();
     }
 
     /**
@@ -80,15 +96,19 @@ class Kiatng_Shooter_LogController extends Kiatng_Shooter_Controller_Abstract
      */
     public function tailAction()
     {
-        $fnm = $this->getRequest()->getParam('fnm', 'exception.log');
-        $dir = $this->getRequest()->getParam('dir', 'log');
         $lines = $this->getRequest()->getParam('lines', 80);
-
-        if (!str_contains($dir, '/')) {
-            /** @see Mage_Core_Model_Config_Options for all the values of $dir */
-            $dir = Mage::getBaseDir($dir);
+        $path = $this->getRequest()->getParam('path');
+        if ($path) {
+            $paths = [base64_decode($path)];
+        } else {
+            $fnm = $this->getRequest()->getParam('fnm', 'exception.log');
+            $dir = $this->getRequest()->getParam('dir', 'log');
+            if (!str_contains($dir, '/')) {
+                /** @see Mage_Core_Model_Config_Options for all the values of $dir */
+                $dir = Mage::getBaseDir($dir);
+            }
+            $paths = glob($dir . DS . $fnm);
         }
-        $paths = glob($dir . DS . $fnm);
         $output = '<h2>GMT '.Mage::getSingleton('core/date')->gmtDate().'</h2>';
 
         $helper = Mage::helper('shooter/file');
