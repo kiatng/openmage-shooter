@@ -29,6 +29,12 @@
             </modules>
         </translate>
     </global>
+    <shooter>
+        <access>
+            <up_to_ids>20</up_to_ids>
+            <other_ids>0</other_ids>
+        </access>
+    </shooter>
     <frontend>
         <routers>
             <shooter>

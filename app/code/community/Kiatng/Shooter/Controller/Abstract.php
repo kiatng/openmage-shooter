@@ -11,7 +11,7 @@ abstract class Kiatng_Shooter_Controller_Abstract extends Mage_Core_Controller_F
     protected $_t2;
 
     /**
-     * Only allow access for customer_id < 20
+     * Validate allowed customer_id.
      *
      * @inheritdoc
      */
@@ -21,12 +21,42 @@ abstract class Kiatng_Shooter_Controller_Abstract extends Mage_Core_Controller_F
         $session = Mage::getSingleton('customer/session');
         if (!$session->authenticate($this)) {
             $this->setFlag('', self::FLAG_NO_DISPATCH, true);
-        } elseif ($session->getCustomerId() > 20) {
+        } elseif (!$this->_isAllowed()) {
             $this->setFlag('', self::FLAG_NO_DISPATCH, true);
             $this->norouteAction();
         }
         $this->_t2 = microtime(true);
         return;
+    }
+
+    /**
+     * Check if the login user is allowed access.
+     *
+     * @return bool
+     */
+    protected function _isAllowed(): bool
+    {
+        $session = Mage::getSingleton('customer/session');
+        if (is_bool($session->getIsAllowShooter())) {
+            return $session->getIsAllowShooter();
+        }
+
+        $allow = false;
+        $id = (int) $session->getCustomerId();
+        if ($id <= (int) Mage::getConfig()->getNode('shooter/access/up_to_ids')) {
+            $allow = true;
+        }
+
+        $ids = (string) Mage::getConfig()->getNode('shooter/access/other_ids');
+        if ($ids && !$allow) {
+            $ids = explode(',', $ids);
+            if (in_array($id, $ids)) {
+                $allow = true;
+            }
+        }
+
+        $session->setIsAllowShooter($allow);
+        return $allow;
     }
 
     /**

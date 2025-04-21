@@ -36,7 +36,7 @@ A browser-centric troubleshooting tool for OpenMage developers. Features:
 
 ## Quick Start
 
-You need to be able to access the customers in the database. The first 20 customers with ID from 1 to 20 are allowed to view the output in the browser. You can edit the `entity_id` in the table `customer_entity` for these users.
+You need to be able to access the customers in the database. By default, the first 20 customers with ID from 1 to 20 are allowed to view the output in the browser. You can edit the `entity_id` in the table `customer_entity` for these users. To allow access for specified customer IDs, see [Configuration](#configuration).
 
 ### Debug Helper
 
@@ -132,6 +132,46 @@ For public accessible URLs, tools like [SSL Labs](https://www.ssllabs.com/ssltes
 
 Refer to [SslController.php](app/code/community/Kiatng/Shooter/controllers/SslController.php) for more details.
 
+## Configuration
+
+### Customizing Customer IDs for Access
+
+By default, the module allows the first 20 customers (with IDs from 1 to 20) to access the output in the browser. To customize this behavior, you can define the allowed customer IDs in your module `config.xml` configuration file.
+
+1. Open the file `etc/config.xml` in in your module.
+2. Add the following configuration under the `<global>` section:
+
+    ```xml
+    <config>
+        <!-- Add the following nodes -->
+        <shooter>
+            <access>
+                <up_to_ids>5</up_to_ids> <!-- For the first 5 customer IDs  -->
+                <other_ids>100,200</other_ids> <!-- Add additional IDs separated by commas  -->
+            </access>
+        </shooter>
+        <!-- end config -->
+    </config>
+    ```
+
+3. Save the file and clear the `config` cache to apply the changes.
+4. Because the access is saved in frontend session, re-login may be required.
+4. If your config doesn't work, add dependency in `/app/etc/modules/Your_Module.xml`:
+
+    ```xml
+    <config>
+        <modules>
+            <Your_Module>
+                <active>true</active>
+                <codePool>local</codePool>
+                <depends> <!-- Add dependency here -->
+                    <Kiatng_Shooter />
+                </depends>
+            </Your_Module>
+      </modules>
+    </config>
+    ```
+
 ## Installation
 
 ### modman
@@ -176,5 +216,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 ## License
 
-@copyright 2024 Ng Kiat Siong
+@copyright 2024-2025 Ng Kiat Siong
 This module is licensed under the GNU GPL v3.0.
