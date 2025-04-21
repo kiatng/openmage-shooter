@@ -28,6 +28,8 @@ A browser-centric troubleshooting tool for OpenMage developers. Features:
     - [Capture the Last Error](#capture-the-last-error)
     - [Show Information in the Browser](#show-information-in-the-browser)
     - [REST OAuth 1.0a Tester](#oauth-10a-tester)
+2. [Configuration](#configuration)
+    - [Customizing Customer IDs for Access](#customizing-customer-ids-for-access)
 2. [Installation](#installation)
     - [Composer](#composer)
     - [Manual Installation](#manual-installation)
