@@ -58,6 +58,24 @@ class Kiatng_Shooter_Helper_File
     }
 
     /**
+     * Get the tail of a file as HTML
+     *
+     * @param string $filepath Path to the file to read
+     * @param int $lines Number of lines to read (must be positive)
+     * @return string Returns the tail of the file as HTML or an empty string if no tail is found
+     */
+    public function getTailHtml(string $filepath, int $lines = 10): string
+    {
+        if ($tail = $this->tail($filepath, $lines)) {
+            $tail = print_r($tail, true);
+            $dt = Mage::getSingleton('core/date')->date('Y-m-d H:i:s', filemtime($filepath));
+            return "<h3>$filepath <em>$dt</em></h3><pre>$tail</pre>";
+        }
+
+        return '';
+    }
+
+    /**
      * Get the latest file in a directory
      *
      * @param string $dir Path to the directory to search
