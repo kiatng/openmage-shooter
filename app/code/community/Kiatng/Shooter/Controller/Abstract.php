@@ -20,6 +20,7 @@ abstract class Kiatng_Shooter_Controller_Abstract extends Mage_Core_Controller_F
         parent::preDispatch();
         $session = Mage::getSingleton('customer/session');
         if (!$session->authenticate($this)) {
+            $session->unsIsAllowShooter();
             $this->setFlag('', self::FLAG_NO_DISPATCH, true);
         } elseif (!$this->_isAllowed()) {
             $this->setFlag('', self::FLAG_NO_DISPATCH, true);
@@ -42,7 +43,7 @@ abstract class Kiatng_Shooter_Controller_Abstract extends Mage_Core_Controller_F
         }
 
         $allow = false;
-        $id = (int) $session->getCustomerId();
+        $id = (int) $session->getId();
         if ($id <= (int) Mage::getConfig()->getNode('shooter/access/up_to_ids')) {
             $allow = true;
         }

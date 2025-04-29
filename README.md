@@ -141,7 +141,7 @@ Refer to [SslController.php](app/code/community/Kiatng/Shooter/controllers/SslCo
 By default, the module allows the first 20 customers (with IDs from 1 to 20) to access the output in the browser. To customize this behavior, you can define the allowed customer IDs in your module `config.xml` configuration file.
 
 1. Open the file `etc/config.xml` in in your module.
-2. Add the following configuration under the `<global>` section:
+2. Add the following configuration under the `<config>` section:
 
     ```xml
     <config>
@@ -166,7 +166,7 @@ By default, the module allows the first 20 customers (with IDs from 1 to 20) to 
             <Your_Module>
                 <active>true</active>
                 <codePool>local</codePool>
-                <depends> <!-- Add dependency here -->
+                <depends> <!-- Add dependency here and clear the `config` cache -->
                     <Kiatng_Shooter />
                 </depends>
             </Your_Module>
